@@ -1,0 +1,7 @@
+database:
+  host: "db.internal.com"
+  port: 5432
+  username: "admin"
+  password: "secure_password_123"
+  pool_size: 20
+  timeout: 30
