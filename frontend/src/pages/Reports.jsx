@@ -83,7 +83,7 @@ export default function Reports() {
           <p style={{ color: 'var(--text-muted)', maxWidth: '400px', margin: '0 auto 1.5rem' }}>
             Run your first drift analysis to see reports here. Each analysis is automatically saved for future reference.
           </p>
-          <a href="/analyze" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+          <a href="/DriftAnalysis.jsx" className="btn btn-primary" style={{ textDecoration: 'none' }}>
             <FileJson size={18} /> Start Analysis
           </a>
         </div>
