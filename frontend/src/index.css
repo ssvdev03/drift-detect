@@ -33,6 +33,9 @@
   --card-padding: 1.5rem;
   --grid-gap: 1.5rem;
   --stat-value-size: 2rem;
+
+  /* Sidebar width */
+  --sidebar-width: 260px;
 }
 
 * {
@@ -65,26 +68,74 @@ a:hover {
   color: var(--accent-secondary);
 }
 
-/* Layout */
+/* ===================================
+   LAYOUT
+   =================================== */
 .app-container {
   display: flex;
   min-height: 100vh;
+  position: relative;
 }
 
+/* ===================================
+   SIDEBAR
+   =================================== */
 .sidebar {
-  width: 260px;
+  width: var(--sidebar-width);
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   padding: var(--spacing-base);
   display: flex;
   flex-direction: column;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, border-color 0.3s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.sidebar--open {
+  transform: translateX(0);
+}
+
+.sidebar--closed {
+  transform: translateX(calc(-1 * var(--sidebar-width)));
+}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+  display: none;
+}
+
+.sidebar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.sidebar-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.35rem;
+  border-radius: var(--radius-md);
+  transition: background 0.2s, color 0.2s;
+  line-height: 0;
+}
+
+.sidebar-close-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .sidebar-logo {
   font-size: 1.15rem;
   font-weight: 700;
-  margin-bottom: 2.5rem;
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -93,6 +144,7 @@ a:hover {
 .sidebar-logo span {
   background: var(--accent-gradient);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -132,13 +184,152 @@ a:hover {
   background-color: rgba(59, 130, 246, 0.1);
 }
 
+/* ===================================
+   MAIN CONTENT
+   =================================== */
 .main-content {
   flex: 1;
-  padding: 2rem 3rem;
   overflow-y: auto;
+  min-height: 100vh;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Components */
+/* When sidebar is open on desktop, shift main content */
+.sidebar--open ~ .main-content {
+  margin-left: var(--sidebar-width);
+}
+
+.sidebar--closed ~ .main-content {
+  margin-left: 0;
+}
+
+/* Top bar with hamburger */
+.topbar {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  min-height: 56px;
+}
+
+.hamburger-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.45rem;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  line-height: 0;
+}
+
+.hamburger-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+}
+
+.main-inner {
+  padding: 2rem 3rem;
+}
+
+/* ===================================
+   MOBILE RESPONSIVE
+   =================================== */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 280px;
+    --sidebar-width: 280px;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .sidebar--closed {
+    transform: translateX(-280px);
+    box-shadow: none;
+  }
+
+  .sidebar-close-btn {
+    display: flex;
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 99;
+    backdrop-filter: blur(2px);
+  }
+
+  /* On mobile, main content never shifts — sidebar is overlayed */
+  .sidebar--open ~ .main-content,
+  .sidebar--closed ~ .main-content {
+    margin-left: 0;
+  }
+
+  .main-inner {
+    padding: 1.25rem 1rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+
+  .page-title {
+    font-size: 1.4rem !important;
+  }
+
+  /* Grid responsiveness */
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-cols-4 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .main-inner {
+    padding: 1rem 0.75rem;
+  }
+
+  .topbar {
+    padding: 0.6rem 0.75rem;
+  }
+}
+
+/* Tablet breakpoint */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .main-inner {
+    padding: 1.5rem 1.5rem;
+  }
+
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ===================================
+   COMPONENTS
+   =================================== */
 .card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -146,6 +337,7 @@ a:hover {
   padding: var(--card-padding);
   box-shadow: var(--shadow-md);
   transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s ease, border-color 0.3s ease, padding 0.3s ease;
+  min-width: 0; /* Prevents Recharts ResponsiveContainer overflow */
 }
 
 .card:hover {
@@ -209,6 +401,8 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .page-title {
@@ -294,6 +488,15 @@ a:hover {
   height: 100%;
   opacity: 0;
   cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .upload-area {
+    padding: 2rem 1rem;
+  }
+  .upload-text {
+    font-size: 0.95rem;
+  }
 }
 
 /* Animations */
@@ -387,6 +590,7 @@ a:hover {
   overflow-x: auto;
   border: 1px solid var(--border-color);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  word-break: break-all;
 }
 
 .ai-box {
@@ -404,4 +608,98 @@ a:hover {
   color: var(--accent-secondary);
   font-weight: 600;
   margin-bottom: 0.5rem;
+}
+
+/* ===================================
+   SETTINGS PAGE RESPONSIVE
+   =================================== */
+.settings-layout {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.settings-nav {
+  width: 220px;
+  flex-shrink: 0;
+}
+
+.settings-content {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .settings-layout {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .settings-nav {
+    width: 100%;
+  }
+
+  /* Make settings nav horizontal scroll on mobile */
+  .settings-nav .card {
+    padding: 0.5rem;
+  }
+
+  .settings-nav-inner {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .settings-nav-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .settings-nav-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+    border-left: none !important;
+    border-bottom: 3px solid transparent !important;
+    padding: 0.6rem 0.75rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .settings-nav-btn--active {
+    border-bottom-color: var(--accent-primary) !important;
+    border-left-color: transparent !important;
+  }
+
+  .setting-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem;
+  }
+
+  .setting-row-control {
+    margin-left: 0 !important;
+    width: 100%;
+  }
+
+  .setting-row-control input[type="text"] {
+    width: 100% !important;
+  }
+}
+
+/* ===================================
+   REPORTS PAGE RESPONSIVE
+   =================================== */
+@media (max-width: 768px) {
+  .report-card-inner {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  .report-card-stats {
+    flex-wrap: wrap;
+    justify-content: flex-start !important;
+  }
+
+  .report-card-meta {
+    flex-wrap: wrap;
+  }
 }

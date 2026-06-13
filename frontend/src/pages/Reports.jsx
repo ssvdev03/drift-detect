@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Trash2, Calendar, FileJson, AlertTriangle, Activity, CheckCircle, Clock, BarChart3, ChevronRight, Inbox } from 'lucide-react';
+import { FileText, Trash2, Calendar, FileJson, AlertTriangle, Activity, CheckCircle, Clock, BarChart3, ChevronRight, Inbox, Download } from 'lucide-react';
+import { useSettings } from '../SettingsContext';
 
 export default function Reports() {
   const [reports, setReports] = useState([]);
   const [selectedReport, setSelectedReport] = useState(null);
+  const { settings } = useSettings();
 
   useEffect(() => {
     const history = JSON.parse(localStorage.getItem('driftHistory') || '[]');
     setReports(history);
   }, []);
+
+  const downloadReport = async (format) => {
+    if (!selectedReport) return;
+    const apiUrl = settings.apiEndpoint || 'http://127.0.0.1:8000';
+    window.open(`${apiUrl}/api/reports/${format}/${selectedReport.id}`, '_blank');
+  };
 
   const clearHistory = () => {
     if (window.confirm('Are you sure you want to clear all report history?')) {
@@ -100,9 +108,19 @@ export default function Reports() {
             <h1 className="page-title">Report Details</h1>
             <p className="page-subtitle">Analysis from {formatDate(selectedReport.date)}</p>
           </div>
-          <span className="badge" style={{ backgroundColor: status.bg, color: status.color, border: `1px solid ${status.color}30`, fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}>
-            {status.label}
-          </span>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <span className="badge" style={{ backgroundColor: status.bg, color: status.color, border: `1px solid ${status.color}30`, fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}>
+              {status.label}
+            </span>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button className="btn btn-outline" onClick={() => downloadReport('markdown')}>
+                <Download size={18} /> MD
+              </button>
+              <button className="btn btn-primary" onClick={() => downloadReport('pdf')}>
+                <Download size={18} /> PDF
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* File Info */}
@@ -111,16 +129,16 @@ export default function Reports() {
           <div className="grid grid-cols-2" style={{ gap: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', background: 'rgba(59, 130, 246, 0.05)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(59, 130, 246, 0.1)' }}>
               <FileJson size={20} color="var(--accent-primary)" />
-              <div>
+              <div style={{ minWidth: 0 }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>Intended</span>
-                <span style={{ fontWeight: 500 }}>{selectedReport.intendedFileName}</span>
+                <span style={{ fontWeight: 500, wordBreak: 'break-all' }}>{selectedReport.intendedFileName}</span>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', background: 'rgba(139, 92, 246, 0.05)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(139, 92, 246, 0.1)' }}>
               <FileJson size={20} color="var(--accent-secondary)" />
-              <div>
+              <div style={{ minWidth: 0 }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>Actual</span>
-                <span style={{ fontWeight: 500 }}>{selectedReport.actualFileName}</span>
+                <span style={{ fontWeight: 500, wordBreak: 'break-all' }}>{selectedReport.actualFileName}</span>
               </div>
             </div>
           </div>
@@ -160,7 +178,7 @@ export default function Reports() {
               <div style={{ width: `${(selectedReport.stats.cosmetic_count / selectedReport.stats.total_drifts) * 100}%`, background: 'var(--success)', transition: 'width 0.5s ease' }} />
             )}
           </div>
-          <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.75rem' }}>
+          <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
               <div style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'var(--danger)' }} /> Breaking
             </div>
@@ -176,10 +194,10 @@ export default function Reports() {
         {/* Metadata */}
         <div className="card">
           <h4 style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Metadata</h4>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="grid grid-cols-2" style={{ gap: '1rem' }}>
             <div>
               <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Report ID</span>
-              <code style={{ fontSize: '0.875rem', padding: '0.25rem 0.5rem', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>{selectedReport.id}</code>
+              <code style={{ fontSize: '0.875rem', padding: '0.25rem 0.5rem', background: 'rgba(0,0,0,0.2)', borderRadius: '4px', wordBreak: 'break-all' }}>{selectedReport.id}</code>
             </div>
             <div>
               <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Analyzed At</span>
@@ -198,7 +216,7 @@ export default function Reports() {
           <h1 className="page-title">Reports</h1>
           <p className="page-subtitle">View past analysis reports and track configuration drift history.</p>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <BarChart3 size={16} /> {reports.length} report{reports.length !== 1 ? 's' : ''}
           </span>
@@ -218,8 +236,8 @@ export default function Reports() {
               onClick={() => setSelectedReport(report)}
               style={{ cursor: 'pointer', borderLeft: `4px solid ${getSeverityColor(report)}`, position: 'relative' }}
             >
-              <div className="flex-between">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+              <div className="report-card-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: 0 }}>
                   <div style={{
                     width: '44px', height: '44px', borderRadius: 'var(--radius-md)',
                     background: 'var(--accent-gradient)', display: 'flex', alignItems: 'center',
@@ -227,16 +245,16 @@ export default function Reports() {
                   }}>
                     <FileText size={22} color="white" />
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
-                      <h3 style={{ fontSize: '1rem', fontWeight: 600 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem', flexWrap: 'wrap' }}>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 600, wordBreak: 'break-all' }}>
                         {report.intendedFileName} vs {report.actualFileName}
                       </h3>
                       <span className="badge" style={{ backgroundColor: status.bg, color: status.color, border: `1px solid ${status.color}30` }}>
                         {status.label}
                       </span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    <div className="report-card-meta" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', fontSize: '0.8rem', color: 'var(--text-muted)', flexWrap: 'wrap' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                         <Calendar size={13} /> {formatDate(report.date)}
                       </span>
@@ -248,8 +266,8 @@ export default function Reports() {
                 </div>
 
                 {/* Stats mini badges */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div className="report-card-stats" style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                     {report.stats.breaking_count > 0 && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.25rem 0.5rem', background: 'rgba(239,68,68,0.1)', borderRadius: '6px' }}>
                         <AlertTriangle size={13} color="var(--danger)" />

@@ -78,16 +78,16 @@ export default function SettingsPage() {
   );
 
   const SettingRow = ({ label, description, children }) => (
-    <div style={{
+    <div className="setting-row" style={{
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       padding: '1.25rem 0',
       borderBottom: '1px solid var(--border-color)',
     }}>
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
         <span style={{ fontWeight: 500, fontSize: '0.95rem', display: 'block', marginBottom: '0.2rem' }}>{label}</span>
         {description && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{description}</span>}
       </div>
-      <div style={{ marginLeft: '2rem' }}>
+      <div className="setting-row-control" style={{ marginLeft: '2rem', flexShrink: 0 }}>
         {children}
       </div>
     </div>
@@ -120,33 +120,36 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '1.5rem' }}>
+      <div className="settings-layout">
         {/* Settings Navigation */}
-        <div style={{ width: '220px', flexShrink: 0 }}>
+        <div className="settings-nav">
           <div className="card" style={{ padding: '0.5rem' }}>
-            {sections.map(section => (
-              <button
-                key={section.id}
-                onClick={() => setActiveSection(section.id)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%',
-                  padding: '0.75rem 1rem', border: 'none', borderRadius: 'var(--radius-md)',
-                  cursor: 'pointer', textAlign: 'left', fontSize: '0.875rem', fontWeight: 500,
-                  transition: 'all 0.2s ease',
-                  background: activeSection === section.id ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                  color: activeSection === section.id ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                  borderLeft: activeSection === section.id ? '3px solid var(--accent-primary)' : '3px solid transparent',
-                }}
-              >
-                <section.icon size={18} />
-                {section.label}
-              </button>
-            ))}
+            <div className="settings-nav-inner">
+              {sections.map(section => (
+                <button
+                  key={section.id}
+                  onClick={() => setActiveSection(section.id)}
+                  className={`settings-nav-btn ${activeSection === section.id ? 'settings-nav-btn--active' : ''}`}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%',
+                    padding: '0.75rem 1rem', border: 'none', borderRadius: 'var(--radius-md)',
+                    cursor: 'pointer', textAlign: 'left', fontSize: '0.875rem', fontWeight: 500,
+                    transition: 'all 0.2s ease',
+                    background: activeSection === section.id ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+                    color: activeSection === section.id ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                    borderLeft: activeSection === section.id ? '3px solid var(--accent-primary)' : '3px solid transparent',
+                  }}
+                >
+                  <section.icon size={18} />
+                  {section.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Settings Content */}
-        <div style={{ flex: 1 }}>
+        <div className="settings-content">
           {/* Appearance */}
           {activeSection === 'appearance' && (
             <div className="card">
@@ -158,7 +161,7 @@ export default function SettingsPage() {
               </p>
 
               <SettingRow label="Theme" description="Switch between dark, light, or system-detected mode">
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {['dark', 'light', 'system'].map(theme => (
                     <button
                       key={theme}
@@ -182,7 +185,7 @@ export default function SettingsPage() {
               </SettingRow>
 
               <SettingRow label="Accent Color" description="Primary color used for buttons, links, and highlights">
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {accentColors.map(color => (
                     <button
                       key={color.value}
@@ -391,7 +394,7 @@ export default function SettingsPage() {
                   style={{
                     padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-md)',
                     border: '1px solid var(--border-color)', background: 'var(--bg-secondary)',
-                    color: 'var(--text-primary)', fontSize: '0.85rem', width: '260px',
+                    color: 'var(--text-primary)', fontSize: '0.85rem', width: '260px', maxWidth: '100%',
                     fontFamily: 'monospace', transition: 'all 0.2s ease',
                   }}
                 />
@@ -402,15 +405,15 @@ export default function SettingsPage() {
                   <Globe size={16} color="var(--accent-primary)" />
                   <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>Connection Status</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, minWidth: '200px' }}>
                     <div style={{
                       width: '8px', height: '8px', borderRadius: '50%',
                       background: apiStatus === null ? 'var(--text-muted)' : apiStatus ? 'var(--success)' : 'var(--danger)',
                       boxShadow: apiStatus ? `0 0 6px var(--success)` : 'none',
-                      transition: 'all 0.3s ease',
+                      transition: 'all 0.3s ease', flexShrink: 0,
                     }} />
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', wordBreak: 'break-all' }}>
                       {apiStatus === null ? `Endpoint: ${settings.apiEndpoint}` : apiStatus ? `Connected to ${settings.apiEndpoint}` : 'Connection failed'}
                     </span>
                   </div>
@@ -418,7 +421,7 @@ export default function SettingsPage() {
                     className="btn btn-outline"
                     onClick={testApiConnection}
                     disabled={testingApi}
-                    style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem' }}
+                    style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', flexShrink: 0 }}
                   >
                     {testingApi ? 'Testing...' : 'Test Connection'}
                   </button>

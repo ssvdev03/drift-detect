@@ -57,7 +57,7 @@ export default function DriftAnalysis() {
       setTimeout(() => setLoadingStep(3), 3000); // AI Analysis
 
       // Use API endpoint from settings
-      const apiUrl = settings.apiEndpoint || 'http://localhost:8000';
+      const apiUrl = settings.apiEndpoint || 'http://127.0.0.1:8000';
 
       const response = await fetch(`${apiUrl}/api/analyze`, {
         method: "POST",
@@ -104,7 +104,7 @@ export default function DriftAnalysis() {
 
   const downloadReport = async (format) => {
     if (!results) return;
-    const apiUrl = settings.apiEndpoint || 'http://localhost:8000';
+    const apiUrl = settings.apiEndpoint || 'http://127.0.0.1:8000';
     window.open(`${apiUrl}/api/reports/${format}/${results.result_id}`, '_blank');
   };
 
@@ -130,7 +130,7 @@ export default function DriftAnalysis() {
             </div>
             <p className="page-subtitle">Found {results.stats.total_drifts} drifts between intended and actual configs.</p>
           </div>
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
             <button className="btn btn-outline" onClick={() => downloadReport('markdown')}>
               <Download size={18} /> MD Report
             </button>
@@ -166,7 +166,7 @@ export default function DriftAnalysis() {
                 <SeverityBadge type={drift.severity} />
               </div>
               
-              <div className="grid grid-cols-2" style={{ gap: '1rem', marginBottom: '1rem' }}>
+              <div className="grid grid-cols-2" style={{ gap: '0.75rem', marginBottom: '1rem' }}>
                 <div>
                   <span className="stat-title">Old Value</span>
                   <div className="code-block">{drift.old_value}</div>

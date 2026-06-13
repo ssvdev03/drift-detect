@@ -9,7 +9,7 @@ const defaultSettings = {
   defaultExportFormat: 'pdf',
   showAiRecommendations: true,
   severityThreshold: 'all',
-  apiEndpoint: 'http://localhost:8000',
+  apiEndpoint: 'http://127.0.0.1:8000',
   compactView: false,
 };
 

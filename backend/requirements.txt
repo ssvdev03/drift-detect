@@ -2,6 +2,6 @@ fastapi
 uvicorn
 deepdiff
 pyyaml
-google-generativeai
+google-genai
 fpdf2
 python-multipart
