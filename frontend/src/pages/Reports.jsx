@@ -14,7 +14,7 @@ export default function Reports() {
 
   const downloadReport = async (format) => {
     if (!selectedReport) return;
-    const apiUrl = settings.apiEndpoint || 'http://127.0.0.1:8000';
+    const apiUrl = settings.apiEndpoint || 'https://drift-detect.onrender.com';
     window.open(`${apiUrl}/api/reports/${format}/${selectedReport.id}`, '_blank');
   };
 

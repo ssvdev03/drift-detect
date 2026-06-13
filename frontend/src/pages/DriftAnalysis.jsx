@@ -57,7 +57,7 @@ export default function DriftAnalysis() {
       setTimeout(() => setLoadingStep(3), 3000); // AI Analysis
 
       // Use API endpoint from settings
-      const apiUrl = settings.apiEndpoint || 'http://127.0.0.1:8000';
+      const apiUrl = settings.apiEndpoint || 'https://drift-detect.onrender.com';
 
       const response = await fetch(`${apiUrl}/api/analyze`, {
         method: "POST",
@@ -104,7 +104,7 @@ export default function DriftAnalysis() {
 
   const downloadReport = async (format) => {
     if (!results) return;
-    const apiUrl = settings.apiEndpoint || 'http://127.0.0.1:8000';
+    const apiUrl = settings.apiEndpoint || 'https://drift-detect.onrender.com';
     window.open(`${apiUrl}/api/reports/${format}/${results.result_id}`, '_blank');
   };
 
